@@ -141,7 +141,7 @@ export const getAllUsers = async (req, res) => {
     const skip = (page - 1) * take;
     let users =[]
 
-    if(searchQuery.length){
+    if(searchQuery?.length){
      users = await User.find({$text: {$search:searchQuery}})
     } else{
      users = await User.find()
