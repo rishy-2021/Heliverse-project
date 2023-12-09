@@ -42,6 +42,26 @@ export const Users: FC = () => {
           setUserForTeams([...userForTeams, student])
       }
     }
+
+    useEffect(()=>{
+      const getFilterStudents = async () => {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_HELIVERSE_SERVICE}/filteredusers`, {
+            params: {
+              gender: filters.gender,
+              domain:filters.domain,
+              presence: encodeURIComponent(JSON.stringify(filters.available))
+            },
+          });
+          setStudents({data: response.data.data});
+        } catch (error) {
+          console.error('Error fetching users:', error);
+        }
+      };
+        getFilterStudents()
+    },[filters])
+
+  useEffect(() => {
     const getStudents = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_HELIVERSE_SERVICE}/users`, {
@@ -56,29 +76,6 @@ export const Users: FC = () => {
         console.error('Error fetching users:', error);
       }
     };
-
-    const getFilterStudents = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_HELIVERSE_SERVICE}/filteredusers`, {
-          params: {
-            gender: filters.gender,
-            domain:filters.domain,
-            presence: encodeURIComponent(JSON.stringify(filters.available))
-          },
-        });
-        setStudents({data: response.data.data});
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-
-    useEffect(()=>{
-      if(filters.available || filters.domain || filters.gender){
-        getFilterStudents()
-      }
-    },[filters])
-
-  useEffect(() => {
     getStudents()
   }, [q, _page, _take,]);
 

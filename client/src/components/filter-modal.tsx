@@ -4,11 +4,11 @@ import Draggable from 'react-draggable';
 import { Button, Checkbox, Modal, Select, SelectProps } from 'antd';
 import { AiOutlineAlignLeft } from "react-icons/ai";
 
-interface Filter {
-  gender: [];
-  domain: [];
-  available: [];
-}
+// interface Filter {
+//   gender: [];
+//   domain: [];
+//   available: [];
+// }
 
 interface Props {
   onFilterChange:(filter:any)=> void
@@ -66,7 +66,7 @@ export const FilterModal: FC<Props> = ({onFilterChange}) => {
 
   const onPresenceChange = (list: string[]) => {
     setPresenceCheckedList(list)
-    if(list.length ==0 || list.length==2){
+    if(list.length ===0 || list.length===2){
       setPresenceListBoolean([true, false]);
     } else {
       if(list[0] === 'Available'){

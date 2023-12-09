@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { NavBar } from "./components/nav-bar";
 import { Users } from "./pages/users";
