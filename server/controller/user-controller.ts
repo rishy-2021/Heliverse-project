@@ -99,31 +99,36 @@ export const getUser = async (req, res, next) => {
   }
 };
 
-// export const getAllUsers = async (req, res, next) => {
-//   try {
-//     const page = parseInt(req.query.page, 10) || 1;
-//     const limit = 20;
+export const getFilteredUsers = async (req, res) => {
+  try {
+    const genderFilter = req.query.gender || [];
+    const domainFilter = req.query.domain || [];
+    const availabilityFilter = JSON.parse(decodeURIComponent(req.query.presence)) || [];
+    ;
 
-//     if (page < 1) {
-//       return res.status(400).json({ error: 'Invalid page number' });
-//     }
+    console.log(genderFilter, domainFilter, availabilityFilter);
 
-//     const skip = (page - 1) * limit;
 
-//     const users = await User.find()
-//       .skip(skip)
-//       .limit(limit)
-//       .lean();
+    const pipeline = [
+      {
+        $match: {
+          gender: { $in: genderFilter },
+          domain: { $in: domainFilter },
+          available: { $in: availabilityFilter },
+        },
+      },
+    ];
 
-//      return res.json({ students: users });
+    const filteredUsers = await User.aggregate(pipeline);
 
-//   } catch (error) {
-//     console.error('Error getting users:', error);
-//     return res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// };
+    res.json({ data: filteredUsers });
+  } catch (error) {
+    console.error('Error filtering users:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
-export const getAllUsers = async (req, res, next) => {
+export const getAllUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page, 10) || 1;
     const take = req.query.take;
@@ -152,3 +157,4 @@ export const getAllUsers = async (req, res, next) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+

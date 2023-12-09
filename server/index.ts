@@ -3,10 +3,11 @@ import routes from "./routes/index";
 import bodyParser from "body-parser"
 import cors from 'cors';
 import mongoose from 'mongoose';
+require("dotenv").config();
 
 const dbName = 'heleverse_db';
 
-mongoose.connect(`mongodb://localhost:27017/${dbName}`);
+mongoose.connect(`${process.env.MONGO_URL}/${dbName}`);
 
 const db = mongoose.connection;
 
