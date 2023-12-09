@@ -1,18 +1,16 @@
 import React, { FC, useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
-import { Button, Checkbox, Input, Modal, Select, SelectProps } from 'antd';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
+import { Button, Checkbox, Input, Modal } from 'antd';
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
 
 export const AddTeamsModal: FC<{buttonDisabled:boolean, onCancel:(query:[])=> void}> = ({buttonDisabled, onCancel}) => {
   const [open, setOpen] = useState(false);
   const [disabled, setDisabled] = useState(true);
-  const [genderCheckedList, setGenderCheckedList] = useState<CheckboxValueType[]>([]);
-  const [presenceCheckedList, setPresenceCheckedList] = useState<CheckboxValueType[]>([]);
+
+
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const draggleRef = useRef<HTMLDivElement>(null);
-  const genderOptions = ['Male', 'Female', 'Others'];
   const presenceOptions = ['Available', 'Unavailable'];
 
   const showModal = () => {
@@ -89,7 +87,7 @@ export const AddTeamsModal: FC<{buttonDisabled:boolean, onCancel:(query:[])=> vo
         </div>
         <div className='flex flex-row mt-4'>
         <p className='mr-5 font-semibold'>Students : </p>
-        <Checkbox.Group options={presenceOptions} value={presenceCheckedList} onChange={()=>{}} />
+        <Checkbox.Group options={presenceOptions} value={[]} onChange={()=>{}} />
         </div>
       </Modal>
     </>

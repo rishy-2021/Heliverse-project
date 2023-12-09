@@ -1,9 +1,7 @@
 import  { FC, useState } from 'react'
-import logo from "../assets/heliverse_logo.jpeg"
-import { MdOutlineMoreVert } from "react-icons/md";
 import { MdBusiness } from "react-icons/md";
-import { FaCircle, FaFemale, FaMale } from "react-icons/fa";
-import { Button, Checkbox } from 'antd';
+import { FaCircle, FaFemale } from "react-icons/fa";
+import {  Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 export enum GenderEnum {
@@ -42,7 +40,7 @@ export const UserCard: FC<Props> = ({student, onUserSelect}) => {
     <div className='bg-white h-fit rounded-lg flex flex-col px-6 py-5 mx-2 my-2' style={{width:"22%"}}>
       <div className='flex flex-1 flex-row justify-between'>
       <div className='flex flex-2 flex-row items-center'>
-        <img src={avatar} width={50} height={50} className='rounded-full border-2' />
+        <img src={avatar} alt='avatar' width={50} height={50} className='rounded-full border-2' />
         <div className='flex flex-col items-start ml-3'>
             <p className='font-bold text-blue-500'>{`${first_name} ${last_name}`}</p>
             <p className='text-gray-700'>{email}</p>

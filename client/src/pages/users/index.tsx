@@ -1,12 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import qs from 'qs';
 import { Student, UserCard } from '../../components/user-card';
-import {  Button, Input, Pagination } from 'antd';
-import { AiOutlineSearch, AiOutlineUsergroupAdd } from "react-icons/ai";
+import { Input, Pagination } from 'antd';
+import { AiOutlineSearch } from "react-icons/ai";
 import { FilterModal } from '../../components/filter-modal';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { PageMeta } from '../../common/types/api.types';
-import { defaultPageMeta } from '../../common/const/api.const';
 import { useDebounce } from '../../utils/use-debounce';
 import { AddTeamsModal } from '../../components/add-teams-modal';
 import axios from 'axios';
@@ -17,23 +15,18 @@ export const Users: FC = () => {
   const navigate = useNavigate()
   const urlParams = new URLSearchParams(search);
   const _page = parseInt(urlParams.get("page") || "1"),
-    _take = parseInt(urlParams.get("take") || "20"),
-    _gender= (urlParams.get("gender") || []);
-    // _presence= (urlParams.get("presense") || []),
-    // _domain= (urlParams.get("domain") || []);
-
+    _take = parseInt(urlParams.get("take") || "20");
 
     const [students, setStudents] = useState<{
-      // meta: PageMeta,
       data: Student[]
     }>({
-      // meta: defaultPageMeta,
       data: []
     });
     const [input, setInput] = useState<string>('');
-    const [filters, setFilters] = useState({gender:[''],
-      domain: [''],
-      available:['']});
+    const [filters, setFilters] = useState({gender:[],
+      domain: [],
+      available:[]});
+
     const [userForTeams, setUserForTeams] = useState<Student[]>([]);
     const q = useDebounce<string>(input, 100);
 
@@ -49,10 +42,9 @@ export const Users: FC = () => {
           setUserForTeams([...userForTeams, student])
       }
     }
-
     const getStudents = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/users', {
+        const response = await axios.get(`${process.env.REACT_APP_HELIVERSE_SERVICE}/users`, {
           params: {
             page: _page,
             take:_take,
@@ -64,7 +56,27 @@ export const Users: FC = () => {
         console.error('Error fetching users:', error);
       }
     };
-    console.log(q);
+
+    const getFilterStudents = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_HELIVERSE_SERVICE}/filteredusers`, {
+          params: {
+            gender: filters.gender,
+            domain:filters.domain,
+            presence: encodeURIComponent(JSON.stringify(filters.available))
+          },
+        });
+        setStudents({data: response.data.data});
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    useEffect(()=>{
+      if(filters.available || filters.domain || filters.gender){
+        getFilterStudents()
+      }
+    },[filters])
 
   useEffect(() => {
     getStudents()
@@ -93,7 +105,7 @@ export const Users: FC = () => {
         <UserCard student={student} onUserSelect={onUserSelect} />
         ))}
       </div>
-      {!q &&  (
+      {!q && !filters.gender.length && !filters.domain.length && !filters.available.length &&  (
         <div className='mt-4 text-center'>
           <Pagination
             size='default'

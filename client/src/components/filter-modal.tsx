@@ -1,18 +1,17 @@
-import React, { FC, useCallback, useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
 import { Button, Checkbox, Modal, Select, SelectProps } from 'antd';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import { AiOutlineAlignLeft, AiOutlineSearch } from "react-icons/ai";
-
-interface Props {
-  onFilterChange:(filter:Filter)=> void
-}
+import { AiOutlineAlignLeft } from "react-icons/ai";
 
 interface Filter {
-  gender: string[];
-  domain: string[];
-  available: string[];
+  gender: [];
+  domain: [];
+  available: [];
+}
+
+interface Props {
+  onFilterChange:(filter:any)=> void
 }
 
 export const FilterModal: FC<Props> = ({onFilterChange}) => {
@@ -20,6 +19,7 @@ export const FilterModal: FC<Props> = ({onFilterChange}) => {
   const [disabled, setDisabled] = useState(true);
   const [genderCheckedList, setGenderCheckedList] = useState<string[]>([]);
   const [presenceCheckedList, setPresenceCheckedList] = useState<string[]>([]);
+  const [presenceListBoolean, setPresenceListBoolean] = useState<boolean[]>([]);
   const [domainList, setDomainList] = useState<string[]>([]);
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const draggleRef = useRef<HTMLDivElement>(null);
@@ -33,7 +33,13 @@ export const FilterModal: FC<Props> = ({onFilterChange}) => {
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     console.log(e);
     setOpen(false);
+    onFilterChange({
+      gender:genderCheckedList,
+      available:presenceListBoolean,
+      domain:domainList
+    })
   };
+  console.log(presenceListBoolean, presenceCheckedList);
 
   const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
     console.log(e);
@@ -54,22 +60,21 @@ export const FilterModal: FC<Props> = ({onFilterChange}) => {
     });
   };
 
-  const applicableFilters = useCallback(() => {
-    onFilterChange({
-      gender:genderCheckedList,
-      available:presenceCheckedList,
-      domain:[]
-    })
-  },[genderCheckedList, presenceCheckedList, domainList])
-
   const onGenderChange = (list: string[] | string[]) => {
     setGenderCheckedList(list);
-    applicableFilters()
   };
 
   const onPresenceChange = (list: string[]) => {
-    setPresenceCheckedList(list);
-    applicableFilters()
+    setPresenceCheckedList(list)
+    if(list.length ==0 || list.length==2){
+      setPresenceListBoolean([true, false]);
+    } else {
+      if(list[0] === 'Available'){
+        setPresenceListBoolean([true]);
+      } else {
+        setPresenceListBoolean([false]);
+      }
+    }
   };
 
   const options: SelectProps['options'] = [];
@@ -120,7 +125,9 @@ export const FilterModal: FC<Props> = ({onFilterChange}) => {
         </div>
         <div className='flex flex-row mt-4'>
         <p className='mr-5 font-semibold'>Present : </p>
-        <Checkbox.Group options={presenceOptions} value={presenceCheckedList} onChange={(val)=>onPresenceChange(val as string[])} />
+        <Checkbox.Group options={presenceOptions} value={presenceCheckedList}
+        onChange={(val)=>onPresenceChange(val as string[])}
+         />
         </div>
         <div className='flex flex-row items-center mt-4'>
         <p className='mr-5 font-semibold'>Domain : </p>
